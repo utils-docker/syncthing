@@ -2,14 +2,20 @@ FROM alpine:3.4
 MAINTAINER Fábio Luciano <fabioluciano@php.net>
 LABEL Description="Cria um servidor do Syncthing"
 
-ENV SYNCTHING_USER syncthing
-ENV SYNCTHING_HOME /mnt/syncthing
+ENV SYNCTHING_USER="syncthing" \
+    SYNCTHING_HOME="/mnt/syncthing" \
+    SYNCTHING_VERSION="v0.14.6" \
+    URL=" https://github.com/syncthing/syncthing/releases/download/"
 
 COPY files/* /etc/
 
+WORKDIR /tmp
+
 RUN apk update \
-  && apk --update --no-cache add supervisor \
+  && apk --update --no-cache add supervisor openssl \
   && rm -rf /var/cache/apk/*
+
+RUN wget $URL$SYNCTHING_VERSION/syncthing-linux-amd64-$SYNCTHING_VERSION.tar.gz && ls -lh
 
 
 VOLUME $SYNCTHING_HOME
